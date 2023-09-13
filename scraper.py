@@ -22,6 +22,9 @@ class Scraper:
   def get_url(self, url):
     self.driver.get(url)
 
+  def wait(self, time):
+    self.driver.implicitly_wait(time)
+
   def wait_for_element(self, by, identifier):
     try:
       element = WebDriverWait(self.driver, 10).until(
