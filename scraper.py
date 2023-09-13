@@ -33,4 +33,7 @@ class Scraper:
       return element
     except TimeoutException:
       print(f'Timeout error: Problem finding element with {by} of "{identifier}"')
-      self.driver.quit()
+      self.quit()
+
+  def quit(self):
+    self.driver.quit()
