@@ -1,4 +1,6 @@
+from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -34,6 +36,15 @@ class Scraper:
     except TimeoutException:
       print(f'Timeout error: Problem finding element with {by} of "{identifier}"')
       self.quit()
+
+  def get_element(self, by, identifier):
+    try:
+      element = self.driver.find_element(self.by_aliases[by], identifier)
+      return element
+    except KeyError:
+      print('Invalid detection method, please refer to the scraper by_aliases member')
+    except NoSuchElementException:
+      print(f'No element with {by} of "{identifier}" found')
 
   def quit(self):
     self.driver.quit()
