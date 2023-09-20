@@ -17,9 +17,11 @@ class Scraper:
     'css_selector': By.CSS_SELECTOR
   }
 
-  def __init__(self, driver):
+  def __init__(self, driver, db):
     print('Initializing scraper')
     self.driver = driver
+    self.db = db
+    self.cursor = db.cursor()
 
   def get_url(self, url):
     self.driver.get(url)
