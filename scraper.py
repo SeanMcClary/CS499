@@ -46,5 +46,14 @@ class Scraper:
     except NoSuchElementException:
       print(f'No element with {by} of "{identifier}" found')
 
+  def get_elements(self, by, identifier):
+    try:
+      elements = self.driver.find_elements(self.by_aliases[by], identifier)
+      return elements
+    except KeyError:
+      print('Invalid detection method, please refer to the scraper by_aliases member')
+    except NoSuchElementException:
+      print(f'No elements with {by} of "{identifier}" found')
+
   def quit(self):
     self.driver.quit()
