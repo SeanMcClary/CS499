@@ -92,3 +92,11 @@ class Scraper:
     self.cursor.execute(sql, vals)
     self.db.commit()
     print(self.cursor.rowcount, 'row(s) inserted into rounds')
+
+  def get_players(self):
+    self.cursor.execute('SELECT pdga_no FROM players')
+    players = self.cursor.fetchall()
+    results = []
+    for player in players:
+      results.append(player[0])
+    return tuple(results)
