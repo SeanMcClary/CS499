@@ -17,9 +17,11 @@ class Scraper:
     'css_selector': By.CSS_SELECTOR
   }
 
-  def __init__(self, driver):
+  def __init__(self, driver, db):
     print('Initializing scraper')
     self.driver = driver
+    self.db = db
+    self.cursor = db.cursor()
 
   def get_url(self, url):
     self.driver.get(url)
@@ -46,5 +48,55 @@ class Scraper:
     except NoSuchElementException:
       print(f'No element with {by} of "{identifier}" found')
 
+  def get_elements(self, by, identifier):
+    try:
+      elements = self.driver.find_elements(self.by_aliases[by], identifier)
+      return elements
+    except KeyError:
+      print('Invalid detection method, please refer to the scraper by_aliases member')
+    except NoSuchElementException:
+      print(f'No elements with {by} of "{identifier}" found')
+
   def quit(self):
     self.driver.quit()
+
+  def insert_event_result(self, result, pdga_no):
+    sql = 'INSERT INTO event_results (pdga_no, event_id, event_rating, place, stroke_ct, cash) VALUES (%s, %s, %s, %s, %s, %s)'
+    vals = (
+        pdga_no,
+        result['event_id'],
+        result['rating'],
+        result['place'],
+        result['stroke_ct'],
+        result['cash']
+    )
+    self.cursor.execute(sql, vals)
+    self.db.commit()
+    print(self.cursor.rowcount, 'row(s) inserted into event_results')
+
+  def insert_round_result(self, result, pdga_no):
+    sql = 'INSERT INTO rounds (pdga_no, event_id, round_no, round_rating, score, par_score, under_par_ct, par_ct, over_par_ct, holes_played, final_round) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    vals = (
+        pdga_no,
+        result['event_id'],
+        result['round_number'],
+        result['round_rating'],
+        result['score'],
+        result['par_score'],
+        result['under_par_ct'],
+        result['par_ct'],
+        result['over_par_ct'],
+        result['holes_played'],
+        result['final_round']
+    )
+    self.cursor.execute(sql, vals)
+    self.db.commit()
+    print(self.cursor.rowcount, 'row(s) inserted into rounds')
+
+  def get_players(self):
+    self.cursor.execute('SELECT pdga_no FROM players')
+    players = self.cursor.fetchall()
+    results = []
+    for player in players:
+      results.append(player[0])
+    return tuple(results)
