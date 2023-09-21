@@ -74,3 +74,21 @@ class Scraper:
     self.db.commit()
     print(self.cursor.rowcount, 'row(s) inserted into event_results')
 
+  def insert_round_result(self, result, pdga_no):
+    sql = 'INSERT INTO rounds (pdga_no, event_id, round_no, round_rating, score, par_score, under_par_ct, par_ct, over_par_ct, holes_played, final_round) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    vals = (
+        pdga_no,
+        result['event_id'],
+        result['round_number'],
+        result['round_rating'],
+        result['score'],
+        result['par_score'],
+        result['under_par_ct'],
+        result['par_ct'],
+        result['over_par_ct'],
+        result['holes_played'],
+        result['final_round']
+    )
+    self.cursor.execute(sql, vals)
+    self.db.commit()
+    print(self.cursor.rowcount, 'row(s) inserted into rounds')
