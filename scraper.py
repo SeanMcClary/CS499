@@ -59,3 +59,18 @@ class Scraper:
 
   def quit(self):
     self.driver.quit()
+
+  def insert_event_result(self, result, pdga_no):
+    sql = 'INSERT INTO event_results (pdga_no, event_id, event_rating, place, stroke_ct, cash) VALUES (%s, %s, %s, %s, %s, %s)'
+    vals = (
+        pdga_no,
+        result['event_id'],
+        result['rating'],
+        result['place'],
+        result['stroke_ct'],
+        result['cash']
+    )
+    self.cursor.execute(sql, vals)
+    self.db.commit()
+    print(self.cursor.rowcount, 'row(s) inserted into event_results')
+
