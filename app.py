@@ -7,6 +7,8 @@ from settings import MYSQL_DB_HOST
 from settings import MYSQL_DB_NAME
 
 from scraper import Scraper
+from procedures.player_rounds import scrape_player_rounds
+import datetime
 
 options = webdriver.ChromeOptions()
 driver = webdriver.Chrome(options=options)
@@ -20,6 +22,14 @@ mysql_connector = connector.connect(
 
 scraper = Scraper(driver, mysql_connector)
 
-scraper.get_url('https://statmando.com/rankings/official/mpo')
+player_list = scraper.get_players()
 
-input()
+start = datetime.datetime.now()
+for player in player_list:
+  try:
+    scraper.get_url('https://statmando.com/player/{}/profile'.format(player[1]))
+    scrape_player_rounds(scraper,player[0],player[1])
+  except:
+    print(player[0],player[1],' could not be scraped')
+finish = datetime.datetime.now()
+print('start',start,'finish',finish)
