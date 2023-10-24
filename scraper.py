@@ -5,6 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from mysql.connector.errors import IntegrityError
+
 class Scraper:
   by_aliases = {
     'id': By.ID,
@@ -89,14 +91,17 @@ class Scraper:
         result['holes_played'],
         result['final_round']
     )
-    self.cursor.execute(sql, vals)
-    self.db.commit()
-    print(self.cursor.rowcount, 'row(s) inserted into rounds')
+    try:
+      self.cursor.execute(sql, vals)
+      self.db.commit()
+      print(self.cursor.rowcount, 'row(s) inserted into rounds')
+    except IntegrityError:
+      print(result['event_id'],pdga_no,result['round_number'],' could not be inserted')
 
   def get_players(self):
-    self.cursor.execute('SELECT pdga_no FROM players')
+    self.cursor.execute('SELECT pdga_no, statmando_url FROM players')
     players = self.cursor.fetchall()
     results = []
     for player in players:
-      results.append(player[0])
-    return tuple(results)
+      results.append((player[0],player[1]))
+    return results
