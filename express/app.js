@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 
 import indexRouter from '#express/routes/index';
 
-const port = 3000;
+const port = 3001;
 
 const app = express();
 
