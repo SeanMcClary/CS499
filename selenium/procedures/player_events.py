@@ -14,7 +14,11 @@ def get_event_data(row):
 def get_pdga_event_data(scraper):
   results = dict()
   results['event_name'] = scraper.get_element('xpath', '//div[@class="panel-pane pane-page-title"]/div/h1').get_attribute('innerText')
-  results['website'] = scraper.get_element('xpath', '//li[@class="tournament-website"]').get_attribute('innerText')[9::]
+  try:
+    results['website'] = scraper.get_element('xpath', '//li[@class="tournament-website"]').get_attribute('innerText')[9::]
+  except AttributeError:
+    results['website'] = None
+    print('Event has no website listed')
 
   month_dict = {
       "Jan": 1,
