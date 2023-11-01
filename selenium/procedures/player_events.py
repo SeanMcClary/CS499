@@ -57,7 +57,14 @@ def scrape_player_events(scraper, pdga_no, profile):
   time.sleep(3)
   rows = scraper.get_elements('xpath', '//table[@id="history"]/tbody/tr')
   for row in rows:
+    pdga_link = row.find_element(By.XPATH, './/td/div/a').get_attribute('href')
     new_event_data = dict()
-    new_event_data['pdga_no'] = pdga_no
     new_event_data.update(get_event_data(row))
-    # Get remaining fields and insert into database
+    scraper.driver.execute_script('window.open(\'\');')
+    scraper.driver.switch_to.window(scraper.driver.window_handles[1])
+    scraper.get_url(pdga_link)
+    time.sleep(3)
+    new_event_data.update(get_pdga_event_data(scraper))
+    scraper.insert_event_result(new_event_data, pdga_no)
+    scraper.driver.close()
+    scraper.driver.switch_to.window(scraper.driver.window_handles[0])
