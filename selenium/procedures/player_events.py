@@ -7,7 +7,11 @@ def get_event_data(row):
   results['rating'] = int(row.find_element(By.XPATH, './/td[4]').get_attribute('innerText') or -1)
   results['place'] = int(row.find_element(By.XPATH, './/td[5]').get_attribute('innerText'))
   results['stroke_ct'] = int(row.find_element(By.XPATH, './/td[6]').get_attribute('innerText'))
-  results['cash'] = int(row.find_element(By.XPATH, './/td[7]').get_attribute('innerText'))
+  try:
+    results['cash'] = int(row.find_element(By.XPATH, './/td[7]').get_attribute('innerText'))
+  except ValueError:
+    results['cash'] = None
+    print('No cash given for the event')
 
   return results
 
