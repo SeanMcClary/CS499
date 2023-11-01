@@ -38,7 +38,13 @@ def get_pdga_event_data(scraper):
   results['end_dt'] = f'{year}-{month_dict[end_month]:0>2}-{end_day:0>2}'
 
   location = scraper.get_element('xpath', '//li[@class="tournament-location"]').get_attribute('innerText')[10::]
-  results['city'], results['state'], results['country'] = location.split(', ')
+  components = location.split(', ')
+  if len(components) == 3:
+    results['city'], results['state'], results['country'] = components
+  else:
+    results['city'] = components[0]
+    results['country'] = components[1]
+    results['state'] = None
 
   return results
 
