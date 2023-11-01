@@ -63,10 +63,11 @@ class Scraper:
     self.driver.quit()
 
   def insert_event_result(self, result, pdga_no):
-    sql = 'INSERT INTO event_results (pdga_no, event_id, event_rating, place, stroke_ct, cash, website, start_dt, end_dt, city, state, country) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    sql = 'INSERT INTO event_results (pdga_no, event_id, event_name, event_rating, place, stroke_ct, cash, website, start_dt, end_dt, city, state, country) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
     vals = (
         pdga_no,
         result['event_id'],
+        result['event_name'],
         result['rating'],
         result['place'],
         result['stroke_ct'],
