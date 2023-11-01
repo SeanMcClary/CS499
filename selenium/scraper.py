@@ -78,9 +78,12 @@ class Scraper:
         result['state'],
         result['country']
     )
-    self.cursor.execute(sql, vals)
-    self.db.commit()
-    print(self.cursor.rowcount, 'row(s) inserted into event_results')
+    try:
+      self.cursor.execute(sql, vals)
+      self.db.commit()
+      print(self.cursor.rowcount, 'row(s) inserted into event_results')
+    except IntegrityError:
+      print(result['event_id'],pdga_no,' could not be inserted')
 
   def insert_round_result(self, result, pdga_no):
     sql = 'INSERT INTO rounds (pdga_no, event_id, round_no, round_rating, score, par_score, under_par_ct, par_ct, over_par_ct, holes_played, final_round) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
