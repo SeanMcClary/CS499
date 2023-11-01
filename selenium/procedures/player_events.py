@@ -11,11 +11,15 @@ def get_event_data(row):
 
   return results
 
-def scrape_player_events(scraper, profile):
+def scrape_player_events(scraper, pdga_no, profile):
   scraper.get_url(f'https://statmando.com/player/{profile}/profile')
   options = scraper.get_elements('xpath', '//option[starts-with(@value,"DGPT")]')
   for option in options:
     option.click()
   time.sleep(3)
   rows = scraper.get_elements('xpath', '//table[@id="history"]/tbody/tr')
-  # For each row, record the scraped results
+  for row in rows:
+    new_event_data = dict()
+    new_event_data['pdga_no'] = pdga_no
+    new_event_data.update(get_event_data(row))
+    # Get remaining fields and insert into database
