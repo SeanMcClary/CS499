@@ -8,6 +8,7 @@ from settings import MYSQL_DB_NAME
 
 from scraper import Scraper
 from procedures.player_rounds import scrape_player_rounds
+from procedures.player_events import scrape_player_events
 import datetime
 
 options = webdriver.ChromeOptions()
@@ -26,10 +27,6 @@ player_list = scraper.get_players()
 
 start = datetime.datetime.now()
 for player in player_list:
-  try:
-    scraper.get_url('https://statmando.com/player/{}/profile'.format(player[1]))
-    scrape_player_rounds(scraper,player[0],player[1])
-  except:
-    print(player[0],player[1],' could not be scraped')
+  scrape_player_events(scraper,player[0],player[1])
 finish = datetime.datetime.now()
 print('start',start,'finish',finish)
