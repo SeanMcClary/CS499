@@ -69,6 +69,8 @@ def get_pdga_event_data(scraper):
 def scrape_player_events(scraper, pdga_no, profile):
   scraper.get_url(f'https://statmando.com/player/{profile}/profile')
   options = scraper.get_elements('xpath', '//option[starts-with(@value,"DGPT")]')
+  if len(options) == 0:
+    return
   for option in options:
     option.click()
   time.sleep(3)
