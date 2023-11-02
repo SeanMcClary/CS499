@@ -43,11 +43,16 @@ def get_pdga_event_data(scraper):
       "Dec": 12,
   }
   date_range = scraper.get_element('xpath', '//li[@class="tournament-date"]').get_attribute('innerText')[6::]
-  start_date, end_date = date_range.split(' to ')
-  start_day, start_month = start_date.split('-')
-  end_day, end_month, year = end_date.split('-')
-  results['start_dt'] = f'{year}-{month_dict[start_month]:0>2}-{start_day:0>2}'
-  results['end_dt'] = f'{year}-{month_dict[end_month]:0>2}-{end_day:0>2}'
+  try:
+    start_date, end_date = date_range.split(' to ')
+    start_day, start_month = start_date.split('-')
+    end_day, end_month, year = end_date.split('-')
+    results['start_dt'] = f'{year}-{month_dict[start_month]:0>2}-{start_day:0>2}'
+    results['end_dt'] = f'{year}-{month_dict[end_month]:0>2}-{end_day:0>2}'
+  except ValueError:
+    day, month, year = date_range.split('-')
+    results['start_dt'] = f'{year}-{month_dict[month]:0>2}-{day:0>2}'
+    results['end_dt'] = f'{year}-{month_dict[month]:0>2}-{day:0>2}'
 
   location = scraper.get_element('xpath', '//li[@class="tournament-location"]').get_attribute('innerText')[10::]
   components = location.split(', ')
