@@ -17,7 +17,11 @@ def get_event_data(row):
 
 def get_pdga_event_data(scraper):
   results = dict()
-  results['event_name'] = scraper.get_element('xpath', '//div[@class="panel-pane pane-page-title"]/div/h1').get_attribute('innerText')
+  try:
+    results['event_name'] = scraper.get_element('xpath', '//div[@class="panel-pane pane-page-title"]/div/h1').get_attribute('innerText')
+  except AttributeError:
+    print('Event page not found')
+    return None
   try:
     results['website'] = scraper.get_element('xpath', '//li[@class="tournament-website"]').get_attribute('innerText')[9::]
   except AttributeError:
@@ -72,7 +76,9 @@ def scrape_player_events(scraper, pdga_no, profile):
     scraper.driver.switch_to.window(scraper.driver.window_handles[1])
     scraper.get_url(pdga_link)
     time.sleep(3)
-    new_event_data.update(get_pdga_event_data(scraper))
-    scraper.insert_event_result(new_event_data, pdga_no)
+    pdga_event_data = get_pdga_event_data(scraper)
+    if pdga_event_data:
+      new_event_data.update(pdga_event_data)
+      scraper.insert_event_result(new_event_data, pdga_no)
     scraper.driver.close()
     scraper.driver.switch_to.window(scraper.driver.window_handles[0])
