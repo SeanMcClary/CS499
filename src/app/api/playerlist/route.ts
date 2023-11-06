@@ -16,7 +16,7 @@ export async function GET() {
         const data = await response.json();
         //console.log(data);
         
-        return Response.json(data.sort((a, b) => {
+        return Response.json(data.sort((a:any, b:any) => {
             const nameA = a.l_name.toUpperCase();
             const nameB = b.l_name.toUpperCase();
             if (nameA < nameB) {
