@@ -63,18 +63,28 @@ class Scraper:
     self.driver.quit()
 
   def insert_event_result(self, result, pdga_no):
-    sql = 'INSERT INTO event_results (pdga_no, event_id, event_rating, place, stroke_ct, cash) VALUES (%s, %s, %s, %s, %s, %s)'
+    sql = 'INSERT INTO event_results (pdga_no, event_id, event_name, event_rating, place, stroke_ct, cash, website, start_dt, end_dt, city, state, country) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
     vals = (
         pdga_no,
         result['event_id'],
+        result['event_name'],
         result['rating'],
         result['place'],
         result['stroke_ct'],
-        result['cash']
+        result['cash'],
+        result['website'],
+        result['start_dt'],
+        result['end_dt'],
+        result['city'],
+        result['state'],
+        result['country']
     )
-    self.cursor.execute(sql, vals)
-    self.db.commit()
-    print(self.cursor.rowcount, 'row(s) inserted into event_results')
+    try:
+      self.cursor.execute(sql, vals)
+      self.db.commit()
+      print(self.cursor.rowcount, 'row(s) inserted into event_results')
+    except IntegrityError:
+      print(result['event_id'],pdga_no,' could not be inserted')
 
   def insert_round_result(self, result, pdga_no):
     sql = 'INSERT INTO rounds (pdga_no, event_id, round_no, round_rating, score, par_score, under_par_ct, par_ct, over_par_ct, holes_played, final_round) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
