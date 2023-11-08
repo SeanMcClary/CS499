@@ -29,7 +29,7 @@ function PlayerList(){
     <div>
       <ul>{players?.map(player =>
         <li>
-          {player.f_name} {player.l_name}, {player.pdga_no}
+          <a href={"/player-data/" + player.pdga_no} target="_blank">{player.f_name} {player.l_name}</a>
         </li>
         )}
       </ul>
