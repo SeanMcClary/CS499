@@ -2,6 +2,8 @@ import express from 'express';
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
+import getPlayer from '#express/queries/getPlayer';
+
 const router = express.Router();
 dotenv.config();
 
@@ -20,5 +22,7 @@ router.get('/', function(req, res, next) {
     });
   });
 });
+
+router.get('/:pdga_no', (req, res, next) => getPlayer(conn, req, res));
 
 export default router;
