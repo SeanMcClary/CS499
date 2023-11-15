@@ -17,9 +17,9 @@ Any time the application is to be run, the virtual environment will need to be a
 A number of dependencies are required to run the express backend with R.
 - Install nodejs
 - Install R (On ubuntu: `sudo apt install r-base`)
-- Install the MySQL connector for R
-  - Open the interactive R console on the command line `R`
-  - Run `install.packages("RMySQL")`
+- Install the MariaDB connector for R
+  - Open the interactive R console on the command line `sudo R`
+  - Run `install.packages("RMariaDB")`
   - Quit the interactive R console: `q()`
 - Run `npm install` to install all node dependencies
 
