@@ -1,9 +1,9 @@
-library(RMySQL)
+library(RMariaDB)
 
 readRenviron('.env')
 
 mysqlconnection <- dbConnect(
-  RMySQL::MySQL(),
+  RMariaDB::MariaDB(),
   dbname = Sys.getenv('MYSQL_DB_NAME'),
   host = Sys.getenv('MYSQL_DB_HOST'),
   port = strtoi(Sys.getenv('MYSQL_DB_PORT')),
@@ -13,7 +13,7 @@ mysqlconnection <- dbConnect(
 
 getRounds <- function (x) {
   result <- dbSendQuery(mysqlconnection, 'SELECT round_rating, score FROM rounds')
-  data.frame <- fetch(result)
+  data.frame <- dbFetch(result)
   lmRound <- lm(score~round_rating, data.frame)
   return(lmRound$coefficients)
 }
