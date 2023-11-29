@@ -11,7 +11,7 @@ mysqlconnection <- dbConnect(
   password = Sys.getenv('MYSQL_DB_PASSWORD'),
 )
 
-getPredictedEventScore <- function (x) {
+getPredictedScore <- function (x) {
   query <- 'SELECT event_rating, stroke_ct FROM event_results WHERE pdga_no = ? AND event_rating > 0'
   result <- dbSendQuery(mysqlconnection, query)
   dbBind(result, list(x))
