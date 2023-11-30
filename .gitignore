@@ -2,6 +2,9 @@ venv
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Package-lock.json
+package-lock.json
+
 # dependencies
 /node_modules
 /.pnp
@@ -28,6 +31,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel

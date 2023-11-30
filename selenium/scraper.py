@@ -109,7 +109,7 @@ class Scraper:
       print(result['event_id'],pdga_no,result['round_number'],' could not be inserted')
 
   def get_players(self):
-    self.cursor.execute('SELECT pdga_no, statmando_url FROM players')
+    self.cursor.execute('SELECT pdga_no, statmando_url,f_name,l_name FROM players')
     players = self.cursor.fetchall()
     results = []
     for player in players:

@@ -1,6 +1,8 @@
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const pdga_no = searchParams.get('pdga_no');
     try {
-        const response = await fetch('http://localhost:3001/', {
+        const response = await fetch((`http://localhost:3001/players/${pdga_no}`), {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -13,11 +15,11 @@ export async function GET() {
         }
     
         const data = await response.json();
-        console.log(data);
-        return Response.json(data);
-      } catch (error) {
+        
+        return Response.json(data[0]);
+    } catch (error) {
         console.error('Error:', error);
-      }
+    }
       
 }
   
