@@ -1,4 +1,4 @@
-export default function getEvetns(conn, req, res) {
+export default function getEvents(conn, req, res) {
   conn.connect((e) => {
     if (req.query.pdga_no) {
       const pdga_no = parseInt(req.query.pdga_no);
