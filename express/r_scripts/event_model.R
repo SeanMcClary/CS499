@@ -12,24 +12,12 @@ mysqlconnection <- dbConnect(
 )
 
 getPredictedScore <- function (x) {
-  query <- 'SELECT event_rating, stroke_ct FROM event_results WHERE pdga_no = ? AND event_rating > 0'
-  result <- dbSendQuery(mysqlconnection, query)
-  dbBind(result, list(x))
-  data.frame <- dbFetch(result)
-  dbClearResult(result)
-  dbDisconnect(mysqlconnection)
-  lmRound <- lm(stroke_ct~event_rating, data.frame)
-  return(lmRound$coefficients)
-}
-
-getPredictedEventScore <- function (x, y) {
   query <- 'SELECT event_rating, stroke_ct
     FROM event_results
-    WHERE pdga_no = ?
-    AND annual_event_id = ?
+    WHERE annual_event_id = ?
     AND event_rating > 0'
   result <- dbSendQuery(mysqlconnection, query)
-  dbBind(result, list(x, y))
+  dbBind(result, list(x))
   data.frame <- dbFetch(result)
   dbClearResult(result)
   dbDisconnect(mysqlconnection)
