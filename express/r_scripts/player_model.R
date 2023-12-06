@@ -16,6 +16,8 @@ getPredictedScore <- function (x) {
   result <- dbSendQuery(mysqlconnection, query)
   dbBind(result, list(x))
   data.frame <- dbFetch(result)
+  dbClearResult(result)
+  dbDisconnect(mysqlconnection)
   lmRound <- lm(stroke_ct~event_rating, data.frame)
   return(lmRound$coefficients)
 }
@@ -33,6 +35,8 @@ getPredictedEventScore <- function (x, y) {
   result <- dbSendQuery(mysqlconnection, query)
   dbBind(result, list(y, x))
   data.frame <- dbFetch(result)
+  dbClearResult(result)
+  dbDisconnect(mysqlconnection)
   lmRound <- lm(stroke_ct~event_rating, data.frame)
   return(lmRound$coefficients)
 }

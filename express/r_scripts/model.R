@@ -14,6 +14,8 @@ mysqlconnection <- dbConnect(
 getRounds <- function (x) {
   result <- dbSendQuery(mysqlconnection, 'SELECT round_rating, score FROM rounds')
   data.frame <- dbFetch(result)
+  dbClearResult(result)
+  dbDisconnect(mysqlconnection)
   lmRound <- lm(score~round_rating, data.frame)
   return(lmRound$coefficients)
 }
