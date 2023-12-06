@@ -23,17 +23,13 @@ getPredictedScore <- function (x) {
 }
 
 getPredictedEventScore <- function (x, y) {
-  query <- 'SELECT a.event_rating, a.stroke_ct
-    FROM event_results a
-    JOIN (
-      SELECT DISTINCT annual_event_id
-      FROM event_results
-      WHERE event_id = ?
-    ) b ON a.annual_event_id = b.annual_event_id
-    WHERE a.pdga_no = ?
+  query <- 'SELECT event_rating, stroke_ct
+    FROM event_results
+    WHERE pdga_no = ?
+    AND annual_event_id = ?
     AND event_rating > 0'
   result <- dbSendQuery(mysqlconnection, query)
-  dbBind(result, list(y, x))
+  dbBind(result, list(x, y))
   data.frame <- dbFetch(result)
   dbClearResult(result)
   dbDisconnect(mysqlconnection)
