@@ -1,15 +1,14 @@
 "use client"
 import { useEffect, useState } from "react";
+import "./styles.css";
 
-
-function Player({ pdga_no }: { pdga_no: string }) {
-  const [fName, setfName] = useState();
-  const [lName, setlName] = useState();
-  const [rating, setRating] = useState();
+function EventList({ pdga_no }: { pdga_no: number }){
+  const [events, setEvents] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
-    async function fetchPlayer() {
-      const response = await fetch(`/api/player?pdga_no=${pdga_no}`, {
+    async function fetchEvents() {
+      const response = await fetch(`/api/events?pdga_no=${pdga_no}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -17,33 +16,50 @@ function Player({ pdga_no }: { pdga_no: string }) {
         },
       });
 
-      const data = await response.json();
-      console.log(data);
-
-      setfName(data['f_name']);
-      setlName(data['l_name']);
-      setRating(data.rating)
+      const eventData = await response.json();
+      setEvents(eventData);
     }
 
-    fetchPlayer();
-  });
-  return (
+    fetchEvents();
+  }, []);
+
+  const filteredEvents = events.filter(event =>
+    `${event.event_name}`.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return(
     <div>
-      <p>Player: {fName} {lName}</p>
-      <p>pdga: {pdga_no}</p>
-      <p>Rating: {rating}</p> 
+      <input
+        type="text"
+        placeholder="Search by event name"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+      <ul>
+        {filteredEvents.map(event =>
+          <li key={event.event_name}>
+            <a className="link">
+              {event.event_name}
+            </a>
+          </li>
+        )}
+      </ul>
     </div>
   );
 }
 
-
 export default function Home({ params }: { params: { pdga_no: string } }) {
   const [intercept, setIntercept] = useState();
   const [roundRating, setRoundRating] = useState();
-  const [playerRating, setPlayerRating] = useState();
+  const [playerData, setPlayerData] = useState({
+    fName: '',
+    lName: '',
+    rating: ''
+  });
 
   useEffect(() => {
     async function fetchData() {
+      // Fetch round rating and intercept
       const responseCoeff = await fetch('/api/model', {
         method: 'GET',
         headers: {
@@ -55,6 +71,7 @@ export default function Home({ params }: { params: { pdga_no: string } }) {
       setIntercept(dataCoeff['(Intercept)']);
       setRoundRating(dataCoeff.round_rating);
 
+      // Fetch player data
       const responsePlayer = await fetch(`/api/player?pdga_no=${params.pdga_no}`, {
         method: 'GET',
         headers: {
@@ -63,15 +80,20 @@ export default function Home({ params }: { params: { pdga_no: string } }) {
         },
       });
       const dataPlayer = await responsePlayer.json();
-      setPlayerRating(dataPlayer.rating);
+      setPlayerData({
+        fName: dataPlayer['f_name'],
+        lName: dataPlayer['l_name'],
+        rating: dataPlayer.rating
+      });
+
     }
 
     fetchData();
   }, [params.pdga_no]);
 
   const calculatePredictedScore = () => {
-    if (intercept && roundRating && playerRating) {
-      const predictedScore = Math.round(parseFloat(intercept) + (roundRating * playerRating));
+    if (intercept && roundRating && playerData.rating) {
+      const predictedScore = Math.round(parseFloat(intercept) + (roundRating * parseFloat(playerData.rating)));
       return predictedScore;
     }
     return null;
@@ -80,14 +102,19 @@ export default function Home({ params }: { params: { pdga_no: string } }) {
   const predictedScore = calculatePredictedScore();
 
   return (
-    <div>
-      <Player pdga_no={params.pdga_no} />
-      <br/>
+    <>
+      <div className="header">
+        <p>Player: {playerData.fName} {playerData.lName}</p>
+        <p>pdga: {params.pdga_no}</p>
+        <p>Rating: {playerData.rating}</p>
+      </div>
       <p>Predicted score: {predictedScore}</p>
       <br/>
       <p>Model Info:</p>
       <p>Constant: {intercept}</p>
       <p>Rating Coefficient: {roundRating}</p>
-    </div>
+
+      <EventList pdga_no={params.pdga_no } />
+    </>
   );
 }

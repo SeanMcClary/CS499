@@ -38,7 +38,7 @@ function PlayerList(){
       <ul>
         {filteredPlayers.map(player =>
           <li key={player.pdga_no}>
-            <a href={"/player-data/" + player.pdga_no} target="_blank">
+            <a className="link" href={"/player-data/" + player.pdga_no} target="_blank">
               {player.f_name} {player.l_name}
             </a>
           </li>
@@ -54,11 +54,6 @@ export default function Home() {
     <div className="header">
       <title>AnalyDisc</title>
       <h1>AnalyDisc</h1>
-      <p>
-        This is a tool designed to analyze <br/>
-        tournament results of professional disc <br/>
-        golfers and predict their future results.
-      </p>
     </div>
 
     <div className="container">
@@ -66,9 +61,16 @@ export default function Home() {
         <PlayerList />
       </div>
       <div className="main-content">
-        <p>
-          content
-        </p>
+      <p>
+        This website, designed by Sean McClary and Noah Swartzentruber, is designed
+        to show you a predictive model of placement for disc golfers based on prior 
+        rounds at the same course. It accomplishes this by accessing a database holding
+        the rounds of disc golfers who finished top 100 in the pro tour over the last 7
+        years. Their event and round specific data was scraped off of their statmando.com
+        profile and the events were associated by course and year. An R-script using
+        linear regression was used to find each players model such that the model differs
+        by player by event to provide the most accurate information.
+      </p>
       </div>
       
     </div>
