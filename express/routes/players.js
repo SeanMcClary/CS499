@@ -27,11 +27,19 @@ router.get('/', function(req, res, next) {
 router.get('/:pdga_no', (req, res, next) => getPlayer(conn, req, res));
 
 router.get('/:pdga_no/model', (req, res, next) => {
-  const model = R.callMethod('./express/r_scripts/player_model.R', 'getPredictedScore', { x: parseInt(req.params.pdga_no) });
-  const result = {};
-  result[model[1]] = model[3];
-  result[model[2]] = model[4];
-  res.json(result);
+  if (req.query.event_id) {
+    const model = R.callMethod('./express/r_scripts/player_model.R', 'getPredictedEventScore', { x: parseInt(req.params.pdga_no), y: parseInt(req.query.event_id) });
+    const result = {};
+    result[model[1]] = model[3];
+    result[model[2]] = model[4];
+    res.json(result);
+  } else {
+    const model = R.callMethod('./express/r_scripts/player_model.R', 'getPredictedScore', { x: parseInt(req.params.pdga_no) });
+    const result = {};
+    result[model[1]] = model[3];
+    result[model[2]] = model[4];
+    res.json(result);
+  }
 });
 
 export default router;
