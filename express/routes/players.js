@@ -3,6 +3,7 @@ import R from 'r-integration';
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 
+import getEventResults from '#express/queries/getEventResults';
 import getPlayer from '#express/queries/getPlayer';
 
 const router = express.Router();
@@ -28,11 +29,21 @@ router.get('/:pdga_no', (req, res, next) => getPlayer(conn, req, res));
 
 router.get('/:pdga_no/model', (req, res, next) => {
   if (req.query.event_id) {
-    const model = R.callMethod('./express/r_scripts/player_model.R', 'getPredictedEventScore', { x: parseInt(req.params.pdga_no), y: parseInt(req.query.event_id) });
-    const result = {};
-    result[model[1]] = model[3];
-    result[model[2]] = model[4];
-    res.json(result);
+    getEventResults(conn, req, (result) => {
+      if (result.length > 2) {
+        const model = R.callMethod('./express/r_scripts/player_model.R', 'getPredictedEventScore', { x: parseInt(req.params.pdga_no), y: parseInt(req.query.event_id) });
+        const result = {};
+        result[model[1]] = model[3];
+        result[model[2]] = model[4];
+        res.json(result);
+      } else {
+        const model = R.callMethod('./express/r_scripts/event_model.R', 'getPredictedScore', { x: parseInt(req.query.event_id) });
+        const result = {};
+        result[model[1]] = model[3];
+        result[model[2]] = model[4];
+        res.json(result);
+      }
+    });
   } else {
     const model = R.callMethod('./express/r_scripts/player_model.R', 'getPredictedScore', { x: parseInt(req.params.pdga_no) });
     const result = {};
