@@ -9,7 +9,7 @@ export default function getEvents(conn, req, res) {
         res.json(result);
       });
     } else {
-      const query = 'select event_name, city, state, country from events'
+      const query = 'select event_name, city, state, country, id from events'
       conn.query(query, (e, result) => {
         res.json(result);
       });

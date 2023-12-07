@@ -48,19 +48,20 @@ function EventList({ pdga_no }: { pdga_no: number }){
   );
 }
 
-export default function Home({ params }: { params: { pdga_no: number } }) {
+export default function Home({ params }: { params: { pdga_no: number} }) {
   const [intercept, setIntercept] = useState();
-  const [roundRating, setRoundRating] = useState();
+  const [eventRating, setEventRating] = useState();
   const [playerData, setPlayerData] = useState({
     fName: '',
     lName: '',
     rating: ''
   });
+  const event_id = 3
 
   useEffect(() => {
     async function fetchData() {
       // Fetch round rating and intercept
-      const responseCoeff = await fetch('/api/model', {
+      const responseCoeff = await fetch(`/api/${params.pdga_no}?event_id=${event_id}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -69,7 +70,7 @@ export default function Home({ params }: { params: { pdga_no: number } }) {
       });
       const dataCoeff = await responseCoeff.json();
       setIntercept(dataCoeff['(Intercept)']);
-      setRoundRating(dataCoeff.round_rating);
+      setEventRating(dataCoeff.event_rating);
 
       // Fetch player data
       const responsePlayer = await fetch(`/api/player?pdga_no=${params.pdga_no}`, {
@@ -92,8 +93,8 @@ export default function Home({ params }: { params: { pdga_no: number } }) {
   }, [params.pdga_no]);
 
   const calculatePredictedScore = () => {
-    if (intercept && roundRating && playerData.rating) {
-      const predictedScore = Math.round(parseFloat(intercept) + (roundRating * parseFloat(playerData.rating)));
+    if (intercept && eventRating && playerData.rating) {
+      const predictedScore = Math.round(parseFloat(intercept) + (eventRating * parseFloat(playerData.rating)));
       return predictedScore;
     }
     return null;
@@ -117,7 +118,7 @@ export default function Home({ params }: { params: { pdga_no: number } }) {
           <br/>
           <p>Model Info:</p>
           <p>Constant: {intercept}</p>
-          <p>Rating Coefficient: {roundRating}</p>
+          <p>Rating Coefficient: {eventRating}</p>
         </div>
       </div>
     </>
