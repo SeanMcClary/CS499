@@ -48,7 +48,7 @@ function EventList({ pdga_no }: { pdga_no: number }){
   );
 }
 
-export default function Home({ params }: { params: { pdga_no: string } }) {
+export default function Home({ params }: { params: { pdga_no: number } }) {
   const [intercept, setIntercept] = useState();
   const [roundRating, setRoundRating] = useState();
   const [playerData, setPlayerData] = useState({
@@ -108,13 +108,18 @@ export default function Home({ params }: { params: { pdga_no: string } }) {
         <p>pdga: {params.pdga_no}</p>
         <p>Rating: {playerData.rating}</p>
       </div>
-      <p>Predicted score: {predictedScore}</p>
-      <br/>
-      <p>Model Info:</p>
-      <p>Constant: {intercept}</p>
-      <p>Rating Coefficient: {roundRating}</p>
-
-      <EventList pdga_no={params.pdga_no } />
+        <div className="container">
+        <div className="event-list">
+          <EventList pdga_no={params.pdga_no } />
+        </div>
+        <div className="content">
+          <p>Predicted score: {predictedScore}</p>
+          <br/>
+          <p>Model Info:</p>
+          <p>Constant: {intercept}</p>
+          <p>Rating Coefficient: {roundRating}</p>
+        </div>
+      </div>
     </>
   );
 }
