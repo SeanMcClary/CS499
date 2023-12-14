@@ -111,7 +111,7 @@ export default function Home({ params }: { params: { pdga_no: number} }) {
       </div>
         <div className="container">
         <div className="event-list">
-          <EventList pdga_no={params.pdga_no } />
+          <EventList pdga_no={params.pdga_no}  />
         </div>
         <div className="content">
           <p>Predicted score: {predictedScore}</p>

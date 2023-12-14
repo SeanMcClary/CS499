@@ -70,6 +70,16 @@ export default function Home() {
         profile and the events were associated by course and year. An R-script using
         linear regression was used to find each players model such that the model differs
         by player by event to provide the most accurate information.
+        <br />
+        <br /> How to Use:
+        <ol>
+          <li>Visit the main page where you'll find a list of disc golf players.</li>
+          <li>Click on a player's name to view their detailed information in a new tab.</li>
+          <li>Within the player’s page, explore the list of events they’ve participated in.</li>
+          <li>Select a specific event to access detailed data.</li>
+          <li>View the linear regression model data, displaying the player's estimated score for that event.</li>
+          <li>Note: The estimation is based on the player’s past performance in that tournament or on all players' performances if not even data is available</li>
+        </ol>
       </p>
       </div>
       
