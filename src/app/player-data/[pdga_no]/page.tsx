@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import "./styles.css";
 
-function EventList({ pdga_no }: { pdga_no: number }){
+function EventList({ pdga_no, setEventId }: { pdga_no: number, setEventId: React.Dispatch<React.SetStateAction<number>> }){
   const [events, setEvents] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -37,8 +37,10 @@ function EventList({ pdga_no }: { pdga_no: number }){
       />
       <ul>
         {filteredEvents.map(event =>
-          <li key={event.event_name}>
-            <a className="link">
+          <li key={event.id}>
+            <a className="link" onClick={() => {
+              setEventId(event.id);
+            }}>
               {event.event_name}
             </a>
           </li>
@@ -49,6 +51,7 @@ function EventList({ pdga_no }: { pdga_no: number }){
 }
 
 export default function Home({ params }: { params: { pdga_no: number} }) {
+  const [eventId, setEventId] = useState(3);
   const [intercept, setIntercept] = useState();
   const [eventRating, setEventRating] = useState();
   const [playerData, setPlayerData] = useState({
@@ -56,12 +59,11 @@ export default function Home({ params }: { params: { pdga_no: number} }) {
     lName: '',
     rating: ''
   });
-  const event_id = 3
 
   useEffect(() => {
     async function fetchData() {
       // Fetch round rating and intercept
-      const responseCoeff = await fetch(`/api/${params.pdga_no}?event_id=${event_id}`, {
+      const responseCoeff = await fetch(`/api/${params.pdga_no}?event_id=${eventId}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -90,7 +92,7 @@ export default function Home({ params }: { params: { pdga_no: number} }) {
     }
 
     fetchData();
-  }, [params.pdga_no]);
+  }, [params.pdga_no, eventId]);
 
   const calculatePredictedScore = () => {
     if (intercept && eventRating && playerData.rating) {
@@ -111,7 +113,7 @@ export default function Home({ params }: { params: { pdga_no: number} }) {
       </div>
         <div className="container">
         <div className="event-list">
-          <EventList pdga_no={params.pdga_no } />
+          <EventList pdga_no={params.pdga_no } setEventId={setEventId} />
         </div>
         <div className="content">
           <p>Predicted score: {predictedScore}</p>
