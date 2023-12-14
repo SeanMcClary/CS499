@@ -5,6 +5,7 @@ import "./styles.css";
 function EventList({ pdga_no, setEventId }: { pdga_no: number, setEventId: React.Dispatch<React.SetStateAction<number | null>> }){
   const [events, setEvents] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selected, setSelected] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -37,8 +38,9 @@ function EventList({ pdga_no, setEventId }: { pdga_no: number, setEventId: React
       />
       <ul>
         {filteredEvents.map(event =>
-          <li key={event.id}>
+          <li key={event.id} style={selected == event.id ? {'background-color': 'darkgray'} : {}}>
             <a className="link" onClick={() => {
+              setSelected(event.id);
               setEventId(event.id);
             }}>
               {event.event_name}
