@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import "./styles.css";
 
-function EventList({ pdga_no, setEventId }: { pdga_no: number, setEventId: React.Dispatch<React.SetStateAction<number>> }){
+function EventList({ pdga_no, setEventId }: { pdga_no: number, setEventId: React.Dispatch<React.SetStateAction<number | null>> }){
   const [events, setEvents] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -51,7 +51,7 @@ function EventList({ pdga_no, setEventId }: { pdga_no: number, setEventId: React
 }
 
 export default function Home({ params }: { params: { pdga_no: number} }) {
-  const [eventId, setEventId] = useState(3);
+  const [eventId, setEventId] = useState<number | null>(null);
   const [intercept, setIntercept] = useState();
   const [eventRating, setEventRating] = useState();
   const [playerData, setPlayerData] = useState({
@@ -61,19 +61,7 @@ export default function Home({ params }: { params: { pdga_no: number} }) {
   });
 
   useEffect(() => {
-    async function fetchData() {
-      // Fetch round rating and intercept
-      const responseCoeff = await fetch(`/api/${params.pdga_no}?event_id=${eventId}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-      const dataCoeff = await responseCoeff.json();
-      setIntercept(dataCoeff['(Intercept)']);
-      setEventRating(dataCoeff.event_rating);
-
+    async function fetchPlayerData() {
       // Fetch player data
       const responsePlayer = await fetch(`/api/player?pdga_no=${params.pdga_no}`, {
         method: 'GET',
@@ -88,11 +76,30 @@ export default function Home({ params }: { params: { pdga_no: number} }) {
         lName: dataPlayer['l_name'],
         rating: dataPlayer.rating
       });
-
     }
 
-    fetchData();
-  }, [params.pdga_no, eventId]);
+    fetchPlayerData();
+  }, [params.pdga_no]);
+
+  useEffect(() => {
+    async function fetchEventData() {
+      if (eventId) {
+        // Fetch round rating and intercept
+        const responseCoeff = await fetch(`/api/${params.pdga_no}?event_id=${eventId}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+        const dataCoeff = await responseCoeff.json();
+        setIntercept(dataCoeff['(Intercept)']);
+        setEventRating(dataCoeff.event_rating);
+      }
+    }
+
+    fetchEventData();
+  }, [eventId]);
 
   const calculatePredictedScore = () => {
     if (intercept && eventRating && playerData.rating) {
@@ -116,11 +123,15 @@ export default function Home({ params }: { params: { pdga_no: number} }) {
           <EventList pdga_no={params.pdga_no } setEventId={setEventId} />
         </div>
         <div className="content">
-          <p>Predicted score: {predictedScore}</p>
-          <br/>
-          <p>Model Info:</p>
-          <p>Constant: {intercept}</p>
-          <p>Rating Coefficient: {eventRating}</p>
+          {predictedScore && intercept && eventRating && (
+            <>
+              <p>Predicted score: {predictedScore}</p>
+              <br />
+              <p>Model Info:</p>
+              <p>Constant: {intercept}</p>
+              <p>Rating Coefficient: {eventRating}</p>
+            </>
+          )}
         </div>
       </div>
     </>
